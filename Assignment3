@@ -1,0 +1,117 @@
+Step # 1 Importing the required libraries 
+In[1]: 
+import pandas as pd 
+import numpy as np 
+import seaborn as sns 
+# Import Decision Tree Classifier 
+from sklearn.tree import DecisionTreeClassifier  
+# Import train_test_split function 
+from sklearn.model_selection import train_test_split  
+#Import scikit-learn metrics module for accuracy calculation 
+from sklearn import metrics 
+
+
+Step#2 loading the dataset 
+In[2]: 
+data=pd.read_csv("C:/Users/Administrator/LPI/Datasets/Admission_Predict_Ver1.
+ csv") 
+data.head()
+
+Step#3 Let’s check for useful information by applying pandas “info()” function 
+In[3] 
+data.info()
+
+Step#4 Let’s check for useful descriptive statistical values by applying pandas 
+“describe()” function 
+In[4]; 
+data.describe()
+
+Step#5 Let’s check for any missing or NA values in the training and testing data 
+set 
+In[5]: 
+data.isnull().sum()
+
+Step#6 Let’s print number of columns and rows i. e shape of dataset 
+ 
+In[6]: 
+print("There are {} rows and {}columns.".format(data.shape[0],data.shape[1])) 
+
+Step#7 let’s use drop () function and perform some basic data frame functions 
+ 
+In[7]: 
+data= data.drop(['Serial No.'], axis=1)
+ 
+In [8]: 
+ 
+data.info() 
+ 
+In [9]: 
+data['Classlabel'].value_counts() 
+
+In [10]: 
+data['SOP'].value_counts()
+
+ 
+In [11]: 
+print(data.Classlabel== 1) 
+
+Step#8 Let’s Visualize  SOP(attribute) data from dataset 
+In [12]: 
+ 
+import matplotlib.pyplot as plt 
+plt.figure(figsize=(10,20)); 
+sns.countplot(data['SOP'].values); 
+
+Step#9 Let’s split the dataset into two sub datasets “Training” and “Testing” 
+Dataset 
+In [13]: 
+#split dataset in features and target variable 
+feature_cols = ['GRE Score','TOEFL Score','University 
+Rating','SOP','CGPA','Research'] 
+X = data[feature_cols] # Features 
+y = data.Classlabel # Target variable
+
+ 
+In [14]:
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, 
+random_state=1) # 70% training and 30% test
+
+ 
+In [15]: 
+len(X_train) 
+ 
+In [16]: 
+len(X_test) 
+
+Step#10  Let’s build the model using training data samples and fit it. 
+In [17]: 
+# Create Decision Tree classifer object 
+dtclf = DecisionTreeClassifier() 
+ 
+# Fit Decision Tree Classifer 
+dtclf = dtclf.fit(X_train,y_train) 
+ 
+#Predict the response for test dataset 
+y_pred = dtclf.predict(X_test) 
+print(y_pred)
+
+Step#11: Now let’s check how our model is doing on the testing data, which we 
+kept aside for testing our model performance 
+In [18]: 
+# Model Accuracy, how often is the classifier correct? 
+accuracy=metrics.accuracy_score(y_pred,y_test)*100 
+print("Accuracy of the model is {:.2f}".format(accuracy)) 
+
+In [19]: 
+metrics.confusion_matrix(y_pred,y_test) 
+
+In [20]: 
+pip install graphviz
+
+In [21]: 
+pip install pydotplus 
+
+Step#12: Now Visualize the decision tree model 
+In [22]: 
+from sklearn import tree 
+tree.plot_tree(dtclf) 
