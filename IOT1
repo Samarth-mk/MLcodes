@@ -1,0 +1,53 @@
+#include <LiquidCrystal.h>
+#include <Servo.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+Servo myservo;
+const int trigPin = 6;
+const int echoPin = 7;
+
+void setup() {
+  Serial.begin(9600); // Initialize serial communication
+  myservo.attach(9);  // Attach the servo on pin 9 to the servo object
+  pinMode(13, OUTPUT);
+  lcd.begin(16, 2); // Initialize the LCD with 16 columns and 2 rows
+  lcd.setCursor(0, 0); // Set the LCD cursor to the top-left position
+  lcd.print("Distance:"); // Print a label on the LCD
+}
+
+void loop() {
+  long duration, cm;
+  pinMode(trigPin, OUTPUT);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10); // Increase the delay for better results
+  digitalWrite(trigPin, LOW);
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+  cm = microsecondsToCentimeters(duration);
+
+  if (cm > 100 && cm < 150) {
+    digitalWrite(13, HIGH);
+    myservo.write(90);
+  } else {
+    digitalWrite(13, LOW);
+    myservo.write(0);
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(cm);
+  Serial.println(" cm");
+
+  lcd.setCursor(0, 1); // Set the LCD cursor to the bottom-left position
+  lcd.print("Dist: ");
+  lcd.print(cm);
+  lcd.print(" cm");
+  
+  delay(50);
+}
+
+long microsecondsToCentimeters(long microseconds) {
+  // The speed of sound is approximately 340 m/s or 29 microseconds per centimeter.
+  return microseconds / 29 / 2;
+}
